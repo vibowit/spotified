@@ -1,0 +1,20 @@
+post_install() {
+    if ! id spotified >/dev/null 2>&1; then
+        useradd -rU -s /usr/bin/nologon -d /var/cache/spotified -G audio spotified
+    fi
+    
+    mkdir -m 0755 -p /var/cache/spotified
+    chown spotified:spotified /var/cache/spotified
+}
+
+pre_remove() {
+    systemctl stop spotified.service
+}
+
+post_remove() {
+    systemctl disable spotified.service
+
+    userdel -r spotified
+    groupdel spotified
+    rm -rf /var/cache/spotified
+}
